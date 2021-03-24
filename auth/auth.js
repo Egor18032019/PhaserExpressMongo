@@ -47,19 +47,16 @@ passport.use('login', new localStrategy({
     passwordField: 'password'
 
 }, async (email, password, done) => {
-
     try {
-
+    // мы использовали метод findOne модели UserModel для запроса в базе данных
         const user = await UserModel.findOne({
             email
         });
 
         if (!user) {
-
             return done(null, false, {
                 message: 'User not found'
             });
-
         }
 
         const validate = await user.isValidPassword(password);
