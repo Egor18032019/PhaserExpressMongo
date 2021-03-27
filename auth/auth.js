@@ -8,15 +8,12 @@ const JWTstrategy = require('passport-jwt').Strategy;
 
 const UserModel = require('../models/userModel');
 
-
-
 // обработка регистрации пользователя
 passport.use('signup', new localStrategy({
     usernameField: 'email',
     passwordField: 'password',
     passReqToCallback: true //мы устанавливаем поле passReqToCallback в true, таким образом объект запроса req будет передан функции обратного вызова.
 }, async (req, email, password, done) => {
-    console.log(req.body)
     try {
         const {
             name
@@ -39,72 +36,70 @@ passport.use('signup', new localStrategy({
 }));
 
 // обработка входа пользователя
+passport.use('login',
+    new localStrategy({
 
-passport.use('login', new localStrategy({
+            usernameField: 'email',
 
-    usernameField: 'email',
+            passwordField: 'password'
 
-    passwordField: 'password'
+        },
+        async (email, password, done) => {
+            try {
+                // мы использовали метод findOne модели UserModel для запроса в базе данных
+                const user = await UserModel.findOne({
+                    email
+                });
+                console.log(user)
 
-}, async (email, password, done) => {
-    try {
-    // мы использовали метод findOne модели UserModel для запроса в базе данных
-        const user = await UserModel.findOne({
-            email
-        });
+                if (!user) {
+                    return done(null, false, {
+                        message: 'User not found'
+                    });
+                }
 
-        if (!user) {
-            return done(null, false, {
-                message: 'User not found'
-            });
-        }
+                const validate = await user.isValidPassword(password);
 
-        const validate = await user.isValidPassword(password);
+                if (!validate) {
+                    return done(null, false, {
+                        message: 'Wrong Password'
+                    });
 
-        if (!validate) {
+                }
 
-            return done(null, false, {
-                message: 'Wrong Password'
-            });
+                return done(null, user, {
+                    message: 'Logged in Successfully'
+                });
 
-        }
+            } catch (error) {
 
-        return done(null, user, {
-            message: 'Logged in Successfully'
-        });
+                return done(error);
 
-    } catch (error) {
+            }
 
-        return done(error);
-
-    }
-
-}));
-
-
+        }));
 
 // проверка валидности токена
+passport.use(`jwt`,
+    new JWTstrategy({
+            secretOrKey: 'top_secret',
+            // secretOrKey` используется для подписи создаваемого JWT. В этом руководстве мы использовали секретный заполнитель, но лучше извлечь его из переменных среды или использовать какой-либо другой безопасный метод.
+            jwtFromRequest: function (req) {
+                //jwtFromRequest - это функция, которая используется для получения jwt от объекта запроса. В этом руководстве мы будем помещать jwt в файл cookie, поэтому в функции мы извлекаем jwt токен из файла cookie объекта запроса, если он существует, в противном случае мы возвращаемся null.
+                let token = null;
+                if (req && req.cookies) token = req.cookies['jwt'];
+                return token;
+            }
+        },
+        async (token, done) => {
+            try {
 
-passport.use(new JWTstrategy(
-    {
-        secretOrKey: 'top_secret',
-        // secretOrKey` используется для подписи создаваемого JWT. В этом руководстве мы использовали секретный заполнитель, но лучше извлечь его из переменных среды или использовать какой-либо другой безопасный метод.
-        jwtFromRequest: function (req) {
-            //jwtFromRequest - это функция, которая используется для получения jwt от объекта запроса. В этом руководстве мы будем помещать jwt в файл cookie, поэтому в функции мы извлекаем jwt токен из файла cookie объекта запроса, если он существует, в противном случае мы возвращаемся null.
-            let token = null;
-            if (req && req.cookies) token = req.cookies['jwt'];
-            return token;
-        }
-    },
-    async (token, done) => {
-        try {
+                return done(null, token.user);
 
-            return done(null, token.user);
+            } catch (error) {
 
-        } catch (error) {
+                done(error);
 
-            done(error);
+            }
 
-        }
-
-    }));
+        }));
