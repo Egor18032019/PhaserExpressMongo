@@ -10,9 +10,12 @@ const router = express.Router();
 // груптруем здесь все роутеры
 
 router.get('/status', (req, res, next) => {
+  console.log(req.user)
   res.status(200);
   res.json({
-    'status': 'ok'
+    status: 'ok work',
+    user: req.user,
+    token: req.query.secret_token,
   });
 });
 
@@ -21,16 +24,15 @@ router.post('/signup',
     session: false
   }),
   async (req, res, next) => {
-    res.status(200).json({
-      message: 'signup successful'
-    });
+    return res.redirect("/login.html");
   });
 
 router.post('/login',
   async (req, res, next) => {
+    
     passport.authenticate('login',
-      async (err, user, info) => {
-        try {
+    async (err, user, info) => {
+         try {
           if (err || !user) {
             const error = new Error('An Error occured');
             return next(error);
@@ -47,7 +49,7 @@ router.post('/login',
             const token = jwt.sign({
               user: body
             }, 'top_secret', {
-              expiresIn: 300
+              expiresIn: "30m"
             });
             const refreshToken = jwt.sign({
               user: body
@@ -67,23 +69,19 @@ router.post('/login',
               email: user.email,
               _id: user._id
             };
-
-            //отправляем токены обратно пользователю
-            return res.status(200).json({
-              token,
-              refreshToken
-            });
+            return res.redirect("/game.html");
           });
         } catch (error) {
           return next(error);
         }
       })(req, res, next);
-      /*В функции обратного вызова мы сначала проверяем, была ли какая-то ошибка или объект user не был возвращен из промежуточного программного обеспечения passport. Если эта проверка верна, мы создаем новую ошибку и передаем ее следующему промежуточному программному обеспечению.
-      Если эта проверка ложна, мы вызываем метод login, который предоставляется в объекте req. Этот метод добавляется паспортом автоматически. Когда мы вызываем этот метод, мы передаем объект user, объект options и функцию обратного вызова в качестве аргументов.
-      В функции обратного вызова мы создаем два веб-токена JSON с помощью библиотеки jsonwebtoken. Для JWT мы включаем идентификатор и адрес электронной почты пользователя в данные JWT, и мы устанавливаем срок действия основного токена в пять минут, а срок действия refreshToken - через один день.
-      Затем мы сохранили оба этих токена в объекте ответа, вызвав метод cookie, и сохранили эти токены в памяти, чтобы мы могли ссылаться на них позже при обновлении токена.  */
+    /*В функции обратного вызова мы сначала проверяем, была ли какая-то ошибка или объект user не был возвращен из промежуточного программного обеспечения passport. Если эта проверка верна, мы создаем новую ошибку и передаем ее следующему промежуточному программному обеспечению.
+    Если эта проверка ложна, мы вызываем метод login, который предоставляется в объекте req. Этот метод добавляется паспортом автоматически. Когда мы вызываем этот метод, мы передаем объект user, объект options и функцию обратного вызова в качестве аргументов.
+    В функции обратного вызова мы создаем два веб-токена JSON с помощью библиотеки jsonwebtoken. Для JWT мы включаем идентификатор и адрес электронной почты пользователя в данные JWT, и мы устанавливаем срок действия основного токена в пять минут, а срок действия refreshToken - через один день.
+    Затем мы сохранили оба этих токена в объекте ответа, вызвав метод cookie, и сохранили эти токены в памяти, чтобы мы могли ссылаться на них позже при обновлении токена.  */
   });
 
+/*
 router.post('/logout', (req, res) => {
   if (req.cookies) {
     const refreshToken = req.cookies['refreshJwt'];
@@ -96,7 +94,7 @@ router.post('/logout', (req, res) => {
     message: 'logged out'
   });
 });
-
+*/
 router.post('/token', (req, res) => {
   const {
     email,
@@ -121,10 +119,9 @@ router.post('/token', (req, res) => {
     res.status(200).json({
       token
     });
-  } 
-  else {
+  } else {
     res.status(401).json({
-      message: 'Unauthorized'
+      message: 'Unauthorized *token не пришёл'
     });
   }
 });
