@@ -37,8 +37,7 @@ router.get('/scores', asyncMiddleware(async (req, res, next) => {
         -1 результаты будут отсортированы в порядке убывания.
         limit, чтобы ограничить вывод не более 10 записями.
     */
-
-    res.status(200).json(users);
+     res.status(200).json(users);
 
 }));
 

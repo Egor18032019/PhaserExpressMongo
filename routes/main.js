@@ -29,10 +29,10 @@ router.post('/signup',
 
 router.post('/login',
   async (req, res, next) => {
-    
+
     passport.authenticate('login',
-    async (err, user, info) => {
-         try {
+      async (err, user, info) => {
+        try {
           if (err || !user) {
             const error = new Error('An Error occured');
             return next(error);
@@ -57,9 +57,12 @@ router.post('/login',
               expiresIn: 86400
             });
 
-            // сохраняем токены в cookie
+             // сохраняем токены в cookie
             res.cookie('jwt', token);
             res.cookie('refreshJwt', refreshToken);
+            // и имя пользователя
+            res.cookie('name', user.name);
+            res.cookie('email', user.email);
             // Примечание: в этом руководстве мы храним эти токены в памяти, но на практике вы лучше хранить эти данные в постоянном хранилище определенного типа.
 
             // сохраняем токены в памяти
