@@ -1,5 +1,6 @@
 import BombSpawner from '../ui/BombSpawner.js';
 import ScoreLabel from "../ui/ScoreLabel.js";
+import onSetupFormSubmit from "../src/submit_score.js";
 
 
 export default class PlatformScene extends Phaser.Scene {
@@ -17,7 +18,7 @@ export default class PlatformScene extends Phaser.Scene {
   }
 
   preload() {
- 
+
   }
 
   createPlatforms() {
@@ -135,7 +136,8 @@ export default class PlatformScene extends Phaser.Scene {
     this.cursors.up.reset();
 
     this.cursors.down.reset();
-
+    const data = this.scoreLabel.getScore()
+    onSetupFormSubmit(data)
     this.time.addEvent({
       delay: 3000,
       callback: this.restart,
@@ -145,12 +147,13 @@ export default class PlatformScene extends Phaser.Scene {
 
   restart() {
     this.scene.restart();
+
   }
 
   create() {
     this.add.image(400, 300, `sky`); // по умолчанию в Phaser 3 координаты всех игровых объектов задаются их центром
     // Если этот способ размещения вам не подходит, измените его с помощью метода setOrigin
-     this.add.text(400, 300, "Беригись бомб !", {
+    this.add.text(400, 300, "Беригись бомб !", {
       font: `22px monospace`,
       color: `grey`
     }).setOrigin(0.5);;
