@@ -187,7 +187,7 @@ export default class PlatformScene extends Phaser.Scene {
     }
     if (this.cursors.up.isDown && this.player.body.touching.down) {
       // также проверяем, касается ли он платформы
-      this.player.setVelocityY(-333);
+      this.player.setVelocityY(-330);
     }
   }
 }

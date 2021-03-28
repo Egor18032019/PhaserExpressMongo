@@ -60,6 +60,9 @@ app.use(express.static(__dirname + '')); //?? убрать?
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');
 });
+app.get('/login', function (req, res) {
+  res.sendFile(__dirname + '/game.html');
+});
 
 
 //сначало он смотрит в первом есть ли это потом во втором и дальше
