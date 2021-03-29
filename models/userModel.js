@@ -56,3 +56,4 @@ const UserModel = mongoose.model('user', UserSchema);
 //и передали этому методу два аргумента: имя нашей модели и схему, которая будет использоваться для модели
 
 module.exports = UserModel;
+ 

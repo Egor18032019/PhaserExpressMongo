@@ -84,7 +84,6 @@ router.post('/login',
     Затем мы сохранили оба этих токена в объекте ответа, вызвав метод cookie, и сохранили эти токены в памяти, чтобы мы могли ссылаться на них позже при обновлении токена.  */
   });
 
-/*
 router.post('/logout', (req, res) => {
   if (req.cookies) {
     const refreshToken = req.cookies['refreshJwt'];
@@ -97,7 +96,7 @@ router.post('/logout', (req, res) => {
     message: 'logged out'
   });
 });
-*/
+
 router.post('/token', (req, res) => {
   const {
     email,
