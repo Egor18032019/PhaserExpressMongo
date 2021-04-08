@@ -94,6 +94,6 @@ app.use((err, req, res, next) => {
 });
 
 // Начинаем прослушивать сервер на выбранном порту
-app.listen(process.env.PORT, () => {
-  console.log(`Server started on port ${process.env.PORT}`);
+app.listen(process.env.PORT || 3000, () => {
+  console.log(`Server started on port ${process.env.PORT || 3000}`);
 });
