@@ -24,11 +24,26 @@ export default class PlatformScene extends Phaser.Scene {
   createPlatforms() {
     const platforms = this.physics.add.staticGroup();
 
+    let gameWidth = this.game.config.width > 800 ? 800 : this.game.config.width
+    let gameHeight = this.game.config.height > 600 ? 600 : this.game.config.height
+    const firstPlatform = {
+      width: gameWidth - 50,
+      heigh: gameHeight / 3
+    }
+    const secondPlatform = {
+      width: 50,
+      heigh: gameHeight / 3 + 100 // что бы человечек проходил
+    }
+    const threePlatform = {
+      width: gameWidth / 4 * 3,
+      heigh: gameHeight / 3 * 2
+    }
     // создаем 4платформы разного размера
-    platforms.create(400, 568, `ground`).setScale(2).refreshBody(); // setScale увеличили и потом надо обновить refreshBody()
-    platforms.create(600, 400, `ground`);
-    platforms.create(50, 250, `ground`);
-    platforms.create(750, 220, `ground`);
+   
+    platforms.create(firstPlatform.width, firstPlatform.heigh, `ground`);
+    platforms.create(secondPlatform.width, secondPlatform.heigh, `ground`);
+    platforms.create(threePlatform.width, threePlatform.heigh, `ground`);
+    platforms.create(gameWidth / 2, gameHeight - 33, `ground`).setScale(2).refreshBody(); // setScale увеличили и потом надо обновить refreshBody() Земля
     return platforms; // возвращаем экземпляр
   }
 
@@ -71,13 +86,15 @@ export default class PlatformScene extends Phaser.Scene {
   }
 
   createStars() {
+    const repeat = 11
+    const stepWidth = this.game.config.width/(repeat+1)
     const stars = this.physics.add.group({
       key: `star`,
-      repeat: 11,
+      repeat: repeat,
       setXY: {
         x: 12,
         y: 0,
-        stepX: 70,
+        stepX: stepWidth,
       }, // с x: 12, y: 0 через интервал в 70 пикселей.
     });
 

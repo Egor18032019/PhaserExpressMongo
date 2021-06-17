@@ -10,9 +10,11 @@ export default class PreloaderGame extends Phaser.Scene {
   loadProgressBar() {
     let progressBar = this.add.graphics();
     let progressBox = this.add.graphics();
-
     let width = this.cameras.main.width;
-    let height = this.cameras.main.height;
+console.log(width)
+let height = this.cameras.main.height;
+console.log(height)
+
     let loadingText = this.make.text({
       x: width / 2,
       y: height / 2 - 50,
@@ -47,13 +49,13 @@ export default class PreloaderGame extends Phaser.Scene {
     assetText.setOrigin(0.5, 0.5);
 
     progressBox.fillStyle(0x222222, 0.8);
-    progressBox.fillRect(240, 270, 320, 50);
+    progressBox.fillRect(width/4+40, height/2-30, width/8*3+20, 50); //(240, 270, 320, 50)
 
     this.load.on(`progress`, function (value) {
       percentText.setText(parseInt(value * 100) + `%`);
       progressBar.clear();
       progressBar.fillStyle(0xffffff, 1);
-      progressBar.fillRect(250, 280, 300 * value, 30);
+      progressBar.fillRect(width/4+50, height/2-20, width/8*3 * value, 30); //(250, 280, 300 * value, 30);
     });
 
     this.load.on(`fileprogress`, function (file) {
